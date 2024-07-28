@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Pad</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature-pad.css">
+    <link rel="stylesheet" href="app.css">
+    <style>
+        .signature-pad {
+            border: 2px solid #000; /* Black border to highlight */
+            border-radius: 5px;
+            background-color: #f9f9f9; /* Light background color */
+        }
+    </style>
+</head>
+<body>
+    <form class="signature-pad-form">
+        <h1>Signature Box</h1>
+        <p>Welcome to our Signature Box website! This platform allows you to easily create & download digital signatures</p>
+        <p>No Sign-up Required. Just draw, download, and use your signature instantly!</p>
+        
+        <p>
+            <b>Signature</b>
+        </p>
+
+        <canvas height="100" width="300" class="signature-pad"></canvas>
+        <p>
+            <a href="#" class="clear-button">Clear</a>
+        </p>
+
+        <button class="submit-button" type="button">Download</button>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
