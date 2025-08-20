@@ -2,37 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signature Box</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature-pad.css">
     <link rel="stylesheet" href="app.css">
-    <style>
-        .signature-pad {
-            border: 2px solid #000; /* Black border to highlight */
-            border-radius: 5px;
-            background-color: #f9f9f9; /* Light background color */
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 </head>
 <body>
-    <form class="signature-pad-form">
-        <h1>Signature Box</h1>
-        <p>Welcome to our Signature Box website! This platform allows you to easily create & download digital signatures</p>
-        <p>No Sign-up Required. Just draw, download, and use your signature instantly!</p>
-        
-        <p>
-            <b>Signature</b>
-        </p>
+    <div class="app-container">
+        <header class="signature-header">
+            <h1>Signature Box</h1>
+        </header>
 
-        <canvas height="100" width="300" class="signature-pad"></canvas>
-        <p>
-            <a href="#" class="clear-button">Clear</a>
-        </p>
+        <main class="main-container">
+            <div class="app-layout">
+                <!-- Left Sidebar: History -->
+                <aside class="history-sidebar">
+                    <h3>Recent Signatures</h3>
+                    <div class="history-list" id="history-list">
+                        <p style="text-align: center; color: #666; font-style: italic;">No saved signatures yet.</p>
+                    </div>
+                </aside>
 
-        <button class="submit-button" type="button">Download</button>
-    </form>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.js"></script>
+                <!-- Center: Signature Canvas -->
+                <div class="signature-area">
+                    <h2>Draw Your Signature</h2>
+                    <canvas class="signature-pad" width="500" height="200" aria-label="Signature drawing area. Use mouse or touch to draw your signature."></canvas>
+                    
+                    <div class="canvas-controls">
+                        <button type="button" class="control-btn undo-btn" disabled aria-label="Undo last stroke">
+                            <span>↶</span> Undo
+                        </button>
+                        <button type="button" class="control-btn redo-btn" disabled aria-label="Redo last undone stroke">
+                            <span>↷</span> Redo
+                        </button>
+                        <button type="button" class="control-btn clear-btn" aria-label="Clear signature">
+                            <span>🗑</span> Clear
+                        </button>
+                        <button type="button" class="primary-btn confirm-btn" aria-label="Confirm and preview signature">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar: Settings -->
+                <aside class="settings-sidebar">
+                    <div class="pen-settings">
+                        <h3>Pen Settings</h3>
+                        <div class="setting-group">
+                            <label>Color:</label>
+                            <div class="color-swatches">
+                                <div class="color-swatch active" data-color="#000000" style="background-color: #000000;" tabindex="0" role="button" aria-label="Black pen color"></div>
+                                <div class="color-swatch" data-color="#0066cc" style="background-color: #0066cc;" tabindex="0" role="button" aria-label="Blue pen color"></div>
+                                <div class="color-swatch" data-color="#cc0000" style="background-color: #cc0000;" tabindex="0" role="button" aria-label="Red pen color"></div>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <label for="pen-thickness">Thickness:</label>
+                            <select id="pen-thickness">
+                                <option value="1">Thin</option>
+                                <option value="2" selected>Medium</option>
+                                <option value="3">Thick</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="text-settings">
+                        <h3>Text Settings</h3>
+                        <div class="setting-group">
+                            <label for="typed-name">Your Name:</label>
+                            <input type="text" id="typed-name" placeholder="Enter your name..." />
+                        </div>
+                        <div class="setting-group">
+                            <label for="font-style">Font:</label>
+                            <select id="font-style">
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Helvetica">Helvetica</option>
+                            </select>
+                        </div>
+                        <div class="setting-group checkbox-group">
+                            <input type="checkbox" id="add-date" />
+                            <label for="add-date">Add today's date</label>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Signatures Modal -->
+        <div id="signatures-modal" class="modal" style="display: none;" role="dialog" aria-labelledby="signatures-modal-title" aria-modal="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="signatures-modal-title">My Signatures</h2>
+                    <button type="button" id="close-signatures-modal" class="close-btn" aria-label="Close signatures modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="signatures-list" class="signatures-grid">
+                        <!-- Signatures will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Modal -->
+        <div id="preview-modal" class="modal" style="display: none;" role="dialog" aria-labelledby="preview-modal-title" aria-modal="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="preview-modal-title">Signature Preview</h2>
+                    <button type="button" id="back-btn" class="secondary-btn" aria-label="Go back to edit signature">Back</button>
+                </div>
+                <div class="modal-body">
+                    <div id="signature-preview" class="signature-preview">
+                        <!-- Preview will be generated here -->
+                    </div>
+                    <div class="preview-actions">
+                        <button type="button" id="download-png-btn" class="primary-btn" aria-label="Download signature as PNG">Download PNG</button>
+                        <button type="button" id="download-pdf-btn" class="primary-btn" aria-label="Download signature as PDF">Download PDF</button>
+                        <button type="button" id="save-signature-btn" class="secondary-btn" aria-label="Save signature to history">Save Only</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
